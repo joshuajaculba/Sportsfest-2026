@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sportsfest 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --maroon:#6e1423;
+  --maroon-deep:#4a0d18;
+  --gold:#f2b632;
+  --gold-soft:#f7d27a;
+  --paper:#fbf6ec;
+  --ink:#2a1216;
+  --muted:#7a5d5f;
+  --line:#e6d8c3;
+  --card:#ffffff;
+  --accent:var(--maroon);
+  --display:"Big Shoulders Display","Impact","Arial Narrow",sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#1d0b0f; --ink:#f6ebdc; --muted:#c2a7a3; --line:#3d1c23; --card:#2a1017; --accent:var(--gold);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1d0b0f; --ink:#f6ebdc; --muted:#c2a7a3; --line:#3d1c23; --card:#2a1017; --accent:var(--gold);
+}
+html{height:100%}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:17px;line-height:1.55}
+button{font-family:inherit}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+
+/* ============ ENVELOPE STAGE ============ */
+#stage{
+  position:fixed;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(242,182,50,.16), transparent 60%),
+    var(--maroon-deep);
+  padding:20px;transition:opacity .7s ease, visibility .7s;
+}
+#stage.done{opacity:0;visibility:hidden;pointer-events:none}
+.stage-title{font-family:var(--display);font-weight:800;color:var(--gold-soft);font-size:26px;margin:0 0 56px;text-align:center;letter-spacing:.03em}
+.env{
+  position:relative;width:min(86vw,380px);aspect-ratio:3/2;perspective:900px;cursor:pointer;
+  border:0;background:none;padding:0;display:block;
+}
+.env-back{position:absolute;inset:0;background:#8b1a2f;border-radius:6px;box-shadow:0 22px 50px rgba(0,0,0,.45)}
+.letter{
+  position:absolute;left:6%;right:6%;top:7%;bottom:7%;z-index:2;background:var(--paper);border-radius:4px;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:12px;text-align:center;
+  color:var(--maroon);transition:transform 1s cubic-bezier(.3,.8,.3,1) .55s;
+  border-top:6px solid var(--gold);
+}
+.letter b{font-family:var(--display);font-size:30px;line-height:1;font-weight:900}
+.letter span{font-size:13px;color:#7a5d5f;margin-top:4px}
+.env-front{
+  position:absolute;inset:0;z-index:3;background:#a02138;border-radius:6px;
+  clip-path:polygon(0 0,50% 56%,100% 0,100% 100%,0 100%);
+}
+.env-front::after{ /* soft fold shading */
+  content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0) 40%,rgba(0,0,0,.18));
+}
+.to{
+  position:absolute;left:0;right:0;bottom:13%;z-index:4;text-align:center;color:#ffe9b6;
+  font-family:var(--display);font-weight:800;font-size:clamp(24px,7vw,32px);line-height:1;pointer-events:none;
+}
+.to small{display:block;font-family:var(--body);font-weight:500;font-size:13px;margin-bottom:4px;color:#f2cf8a}
+.flap{
+  position:absolute;left:0;top:0;width:100%;height:56%;z-index:5;background:#b3263e;
+  clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top center;
+  transition:transform .75s ease, z-index 0s .38s;
+}
+.seal{
+  position:absolute;left:50%;top:56%;z-index:6;width:58px;height:58px;margin:-29px 0 0 -29px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffd978,#d99a14);color:var(--maroon-deep);
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:25px;
+  box-shadow:0 4px 10px rgba(0,0,0,.4);transition:opacity .3s, transform .3s;
+}
+.hint{margin:60px 0 0;color:var(--gold-soft);font-weight:600;animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.45}}
+.env.open .flap{transform:rotateX(180deg);z-index:1}
+.env.open .seal{opacity:0;transform:scale(.4)}
+.env.open .letter{transform:translateY(-58%)}
+.env.open ~ .hint{visibility:hidden}
+
+/* ============ DECK ============ */
+#deck{min-height:100vh;display:flex;flex-direction:column}
+.page{display:none;flex:1;padding-bottom:110px}
+.page.active{display:block;animation:enter .45s ease both}
+@keyframes enter{from{opacity:0;transform:translateX(24px)}to{opacity:1;transform:none}}
+.page.back.active{animation-name:enterBack}
+@keyframes enterBack{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:none}}
+.wrap{max-width:720px;margin:0 auto;padding:0 20px}
+
+/* cover */
+.cover{
+  text-align:center;color:#fff7e6;padding:64px 20px 56px;position:relative;overflow:hidden;
+  background:radial-gradient(circle at 50% 118%, rgba(242,182,50,.28), transparent 55%),var(--maroon-deep);
+}
+.cover::before{
+  content:"";position:absolute;inset:0;pointer-events:none;opacity:.14;
+  background:
+    radial-gradient(circle at 50% 100%, transparent 0 118px, #f2b632 118px 121px, transparent 121px),
+    linear-gradient(#f2b632,#f2b632) 50% 100%/3px 100% no-repeat;
+}
+.cover > *{position:relative}
+.cover small{display:block;font-size:15px;color:var(--gold-soft);margin-bottom:8px;letter-spacing:.04em}
+.cover h1{font-family:var(--display);font-weight:900;margin:0;line-height:.86;font-size:clamp(76px,22vw,170px);color:var(--gold);text-shadow:0 5px 0 var(--maroon)}
+.cover .year{font-family:var(--display);font-weight:800;font-size:clamp(36px,10vw,72px);line-height:1;margin-top:6px;letter-spacing:.3em;padding-left:.3em}
+.dates{
+  display:inline-block;margin-top:28px;padding:10px 26px;border:2.5px solid var(--gold);border-radius:999px;
+  font-family:var(--display);font-weight:800;font-size:clamp(26px,7vw,38px);color:var(--gold);line-height:1.1
+}
+.cover p.lead{max-width:28em;margin:18px auto 0;color:#f0dfc8;font-size:18px}
+
+.count{max-width:720px;margin:-26px auto 0;padding:0 20px;position:relative;z-index:2}
+.count-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 16px 22px;text-align:center;box-shadow:0 10px 28px rgba(74,13,24,.18)}
+.count-card h2{font-family:var(--display);font-weight:800;font-size:24px;margin:0 0 14px;color:var(--accent);line-height:1.1}
+.units{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.unit{background:var(--maroon);color:var(--gold);border-radius:10px;padding:12px 4px 8px}
+.unit b{display:block;font-family:var(--display);font-weight:900;font-size:clamp(36px,11vw,56px);line-height:1;font-variant-numeric:tabular-nums}
+.unit span{font-size:13px;color:var(--gold-soft);font-weight:600}
+.count-note{margin:14px 0 0;color:var(--muted);font-size:15px}
+.live{font-family:var(--display);font-weight:900;font-size:38px;color:var(--accent);line-height:1.1}
+
+/* day pages */
+.dayhead{background:var(--maroon-deep);color:#fff7e6;padding:34px 20px 30px;text-align:center}
+.dayhead .when{color:var(--gold-soft);font-weight:600}
+.dayhead h2{font-family:var(--display);font-weight:900;font-size:clamp(64px,18vw,110px);line-height:.9;margin:4px 0 6px;color:var(--gold);text-shadow:0 4px 0 var(--maroon)}
+.dayhead p{margin:0 auto;max-width:28em;color:#f0dfc8}
+.body{padding-top:28px}
+.block{margin:0 0 28px}
+.block h3{font-family:var(--display);font-weight:800;font-size:28px;margin:0 0 10px;display:flex;align-items:center;gap:12px}
+.block h3::after{content:"";flex:1;height:3px;background:var(--gold);border-radius:2px}
+.match{display:grid;grid-template-columns:96px 1fr;background:var(--card);border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.time{background:var(--maroon);color:var(--gold);display:flex;flex-direction:column;justify-content:center;align-items:center;font-family:var(--display);font-weight:800;font-size:26px;line-height:1;padding:12px 6px;text-align:center}
+.time span{font-size:15px;font-weight:700;color:var(--gold-soft);margin-top:3px}
+.time.wide{font-size:21px}
+.teams{padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 10px;font-weight:600}
+.vs{font-family:var(--display);font-weight:800;color:var(--accent);font-size:20px}
+.match.award{border:2px solid var(--gold);background:linear-gradient(90deg,rgba(242,182,50,.18),transparent)}
+.match.award .teams{font-family:var(--display);font-weight:900;font-size:30px;color:var(--accent)}
+.program{list-style:none;margin:0;padding:0;border-left:3px solid var(--gold);margin-left:8px}
+.program li{position:relative;padding:0 0 16px 24px}
+.program li::before{content:"";position:absolute;left:-10px;top:6px;width:17px;height:17px;border-radius:50%;background:var(--paper);border:4px solid var(--maroon)}
+:root[data-theme="dark"] .program li::before{border-color:var(--gold)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .program li::before{border-color:var(--gold)}}
+.program b{display:block;font-size:18px}
+.program span{color:var(--muted);font-size:15px}
+
+/* closing */
+.closing{
+  min-height:calc(100vh - 90px);display:flex;align-items:center;justify-content:center;text-align:center;color:#fff7e6;
+  padding:48px 20px;background:radial-gradient(circle at 50% 118%, rgba(242,182,50,.28), transparent 55%),var(--maroon-deep);
+}
+.closing-in{max-width:30em}
+.seal-sm{
+  width:64px;height:64px;margin:0 auto 22px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#ffd978,#d99a14);color:var(--maroon-deep);
+  display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:900;font-size:28px;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);
+}
+.to-line{font-family:var(--display);font-weight:800;font-size:clamp(30px,8vw,44px);line-height:1.05;margin:0;color:var(--gold-soft)}
+.closing h2{font-weight:600;font-size:20px;margin:10px 0 6px;color:#f0dfc8}
+.big-name{font-family:var(--display);font-weight:900;font-size:clamp(64px,19vw,120px);line-height:.88;color:var(--gold);text-shadow:0 4px 0 var(--maroon)}
+.closing .dates{margin-top:24px}
+.closing .lead{margin:18px auto 0;color:#f0dfc8;font-size:18px}
+
+/* bottom pager */
+.pager{
+  position:fixed;left:0;right:0;bottom:0;z-index:10;background:var(--paper);border-top:2px solid var(--maroon);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom,0px));
+}
+.pager-in{max-width:720px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.nbtn{
+  border:0;border-radius:999px;padding:12px 22px;font-weight:700;font-size:16px;cursor:pointer;min-width:104px;
+  background:var(--gold);color:var(--maroon-deep);
+}
+.nbtn.ghost{background:transparent;color:var(--accent);border:2px solid var(--line)}
+.nbtn[disabled]{opacity:.35;cursor:default}
+.dots{display:flex;gap:8px}
+.dot{width:12px;height:12px;border-radius:50%;border:2px solid var(--maroon);background:transparent;padding:0;cursor:pointer}
+:root[data-theme="dark"] .dot{border-color:var(--gold)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .dot{border-color:var(--gold)}}
+.dot[aria-current="true"]{background:var(--gold);border-color:var(--gold)}
+.pager[hidden]{display:none}
+
+@media (max-width:420px){
+  .match{grid-template-columns:82px 1fr}
+  .time{font-size:22px}
+  .teams{padding:10px 12px}
+  .nbtn{min-width:84px;padding:12px 16px}
+}
+@media (prefers-reduced-motion: reduce){
+  .page.active,.page.back.active{animation:none}
+  .hint{animation:none}
+  .letter,.flap,.seal,#stage{transition-duration:.01s;transition-delay:0s}
+}
+</style>
+</head>
+<body>
+
+<!-- ENVELOPE -->
+<div id="stage">
+  <h1 class="stage-title">You have a letter</h1>
+  <button class="env" id="env" type="button" aria-label="Open the envelope">
+    <div class="env-back"></div>
+    <div class="letter"><b>Sportsfest 2026</b><span>October 15 to 17</span></div>
+    <div class="env-front"></div>
+    <div class="to"><small>To our guests</small>You are invited</div>
+    <div class="flap"></div>
+    <div class="seal">26</div>
+  </button>
+  <p class="hint" id="hint">Tap the envelope to open</p>
+</div>
+
+<!-- DECK -->
+<div id="deck" aria-live="polite">
+
+  <!-- COVER -->
+  <section class="page" data-name="Cover">
+    <header class="cover">
+      <small>You are invited to</small>
+      <h1>SPORTSFEST</h1>
+      <div class="year">2026</div>
+      <div class="dates">October 15 to 17, 2026</div>
+      <p class="lead">Three days of basketball, volleyball and badminton. Come cheer for your team.</p>
+    </header>
+    <div class="count">
+      <div class="count-card">
+        <h2 id="cdTitle">Day 1 starts in</h2>
+        <div class="units" id="units">
+          <div class="unit"><b id="cdD">00</b><span>Days</span></div>
+          <div class="unit"><b id="cdH">00</b><span>Hours</span></div>
+          <div class="unit"><b id="cdM">00</b><span>Minutes</span></div>
+          <div class="unit"><b id="cdS">00</b><span>Seconds</span></div>
+        </div>
+        <p class="count-note" id="cdNote">Thursday, October 15 at 12:00 noon</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 1 -->
+  <section class="page" data-name="Day 1">
+    <header class="dayhead">
+      <div class="when">Thursday, October 15</div>
+      <h2>DAY 1</h2>
+      <p>Opening program at 12:00 noon, then the first basketball and volleyball games.</p>
+    </header>
+    <div class="wrap body">
+      <div class="block">
+        <h3>Opening program, 12:00 noon</h3>
+        <ol class="program">
+          <li><b>Parade</b><span>CS Players and Alumni</span></li>
+          <li><b>Opening Prayer</b><span>Andrea Butardo</span></li>
+          <li><b>Entrance of Colors</b><span>UM ROTC</span></li>
+          <li><b>National Hymn</b><span>Clyde Yurag</span></li>
+          <li><b>UM Hymn</b><span>Jay Owagan</span></li>
+          <li><b>Opening Remarks</b><span>Professor Joselito Borces</span></li>
+          <li><b>Introduction of Host</b></li>
+          <li><b>Introduction of Judges</b></li>
+          <li><b>Introduction of Muse and Escort</b></li>
+          <li><b>Mr. and Ms. Sportsfest 2026 Awarding</b></li>
+        </ol>
+      </div>
+      <div class="block">
+        <h3>Basketball</h3>
+        <div class="match"><div class="time">2:00<span>PM</span></div><div class="teams">1st Year Team 2 <span class="vs">vs</span> 4th Year</div></div>
+        <div class="match"><div class="time">2:30<span>PM</span></div><div class="teams">3rd Year Team 2 <span class="vs">vs</span> 1st Year Team 3</div></div>
+        <div class="match"><div class="time">3:00<span>PM</span></div><div class="teams">1st Year Team 1 <span class="vs">vs</span> 2nd Year Team 1 Grey</div></div>
+        <div class="match"><div class="time">3:30<span>PM</span></div><div class="teams">3rd Year Team 1 <span class="vs">vs</span> 1st Year Team 4</div></div>
+      </div>
+      <div class="block">
+        <h3>Volleyball (Men)</h3>
+        <div class="match"><div class="time">4:00<span>PM</span></div><div class="teams">2nd Year and 4th Year <span class="vs">vs</span> SHS</div></div>
+        <div class="match"><div class="time">4:30<span>PM</span></div><div class="teams">1st Year <span class="vs">vs</span> 3rd Year</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 2 -->
+  <section class="page" data-name="Day 2">
+    <header class="dayhead">
+      <div class="when">Friday, October 16</div>
+      <h2>DAY 2</h2>
+      <p>Badminton in the morning, semifinals after lunch, then the first All Star games.</p>
+    </header>
+    <div class="wrap body">
+      <div class="block">
+        <h3>Badminton</h3>
+        <div class="match"><div class="time">10:00<span>AM</span></div><div class="teams">1st Year Team 1 <span class="vs">vs</span> 2nd Year Team 1</div></div>
+        <div class="match"><div class="time">10:30<span>AM</span></div><div class="teams">3rd Year Team 1 <span class="vs">vs</span> 4th Year Team 1</div></div>
+        <div class="match"><div class="time">11:00<span>AM</span></div><div class="teams">1st Year Team 2 <span class="vs">vs</span> 3rd Year Team 2</div></div>
+        <div class="match"><div class="time">11:30<span>AM</span></div><div class="teams">SHS Team <span class="vs">vs</span> 4th Year Team 2</div></div>
+      </div>
+      <div class="block">
+        <h3>Semifinals</h3>
+        <div class="match"><div class="time wide">1:00 to 1:30<span>PM</span></div><div class="teams">Badminton</div></div>
+        <div class="match"><div class="time wide">2:00 to 2:30<span>PM</span></div><div class="teams">Basketball</div></div>
+      </div>
+      <div class="block">
+        <h3>All Star Play</h3>
+        <div class="match"><div class="time wide">2:30 to 3:00<span>PM</span></div><div class="teams">Basketball: Alumni A <span class="vs">vs</span> Alumni B</div></div>
+        <div class="match"><div class="time wide">Next<span>Time to be announced</span></div><div class="teams">Volleyball (Men): Intrams A <span class="vs">vs</span> Intrams B</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY 3 -->
+  <section class="page" data-name="Day 3">
+    <header class="dayhead">
+      <div class="when">Saturday, October 17</div>
+      <h2>DAY 3</h2>
+      <p>Championship games, the final All Star plays and the awarding.</p>
+    </header>
+    <div class="wrap body">
+      <div class="block">
+        <h3>Championship</h3>
+        <div class="match"><div class="time">11:00<span>AM</span></div><div class="teams">Badminton</div></div>
+        <div class="match"><div class="time">12:00<span>PM</span></div><div class="teams">Volleyball (Men)</div></div>
+        <div class="match"><div class="time">12:30<span>PM</span></div><div class="teams">Volleyball (Women)</div></div>
+        <div class="match"><div class="time">1:00<span>PM</span></div><div class="teams">Basketball</div></div>
+      </div>
+      <div class="block">
+        <h3>All Star Play</h3>
+        <div class="match"><div class="time">1:30<span>PM</span></div><div class="teams">Basketball: Intrams <span class="vs">vs</span> Alumni winner</div></div>
+        <div class="match"><div class="time">2:00<span>PM</span></div><div class="teams">Volleyball</div></div>
+        <div class="match"><div class="time">2:30<span>PM</span></div><div class="teams">Basketball</div></div>
+      </div>
+      <div class="block">
+        <div class="match award"><div class="time">3:00<span>PM</span></div><div class="teams">Awarding</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CLOSING INVITATION -->
+  <section class="page" data-name="Invitation">
+    <div class="closing">
+      <div class="closing-in">
+        <div class="seal-sm">26</div>
+        <p class="to-line">To our beloved professors,</p>
+        <h2>You are invited to our</h2>
+        <div class="big-name">SPORTSFEST<br>2026</div>
+        <div class="dates">October 15 to 17, 2026</div>
+        <p class="lead">Day 1 starts on Thursday, October 15 at 12:00 noon. Join us in cheering for our players, and thank you for being part of it.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- PAGER -->
+<nav class="pager" id="pager" aria-label="Pages" hidden>
+  <div class="pager-in">
+    <button class="nbtn ghost" id="prev" type="button">Back</button>
+    <div class="dots" id="dots"></div>
+    <button class="nbtn" id="next" type="button">Next</button>
+  </div>
+</nav>
+
+<script>
+(function(){
+  var TARGET = new Date('2026-10-15T12:00:00+08:00').getTime(); // Day 1, 12:00 noon Philippine time
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- Envelope ---- */
+  var stage = document.getElementById('stage');
+  var env = document.getElementById('env');
+  var pager = document.getElementById('pager');
+  var opened = false;
+  function reveal(){
+    stage.classList.add('done');
+    pager.hidden = false;
+    go(0, false);
+  }
+  env.addEventListener('click', function(){
+    if(opened) return;
+    opened = true;
+    env.classList.add('open');
+    env.setAttribute('aria-label','Envelope opened');
+    setTimeout(reveal, reduce ? 50 : 2300);
+  });
+
+  /* ---- Deck ---- */
+  var pages = [].slice.call(document.querySelectorAll('.page'));
+  var dotsEl = document.getElementById('dots');
+  var prev = document.getElementById('prev');
+  var next = document.getElementById('next');
+  var cur = 0;
+  pages.forEach(function(p,i){
+    var d = document.createElement('button');
+    d.className = 'dot'; d.type = 'button';
+    d.setAttribute('aria-label','Go to ' + p.getAttribute('data-name'));
+    d.addEventListener('click', function(){ go(i, i < cur); });
+    dotsEl.appendChild(d);
+  });
+  function go(i, back){
+    if(i < 0 || i >= pages.length) return;
+    pages.forEach(function(p,k){
+      p.classList.toggle('active', k === i);
+      p.classList.toggle('back', !!back);
+    });
+    [].slice.call(dotsEl.children).forEach(function(d,k){
+      if(k === i) d.setAttribute('aria-current','true'); else d.removeAttribute('aria-current');
+    });
+    cur = i;
+    prev.disabled = i === 0;
+    next.textContent = i < pages.length - 1 ? pages[i+1].getAttribute('data-name') : 'Cover';
+    window.scrollTo(0,0);
+  }
+  prev.addEventListener('click', function(){ go(cur-1, true); });
+  next.addEventListener('click', function(){
+    if(cur < pages.length - 1) go(cur+1, false); else go(0, true);
+  });
+  document.addEventListener('keydown', function(e){
+    if(pager.hidden) return;
+    if(e.key === 'ArrowRight') next.click();
+    if(e.key === 'ArrowLeft') prev.click();
+  });
+  var sx = null;
+  document.addEventListener('touchstart', function(e){ sx = e.touches[0].clientX; }, {passive:true});
+  document.addEventListener('touchend', function(e){
+    if(sx === null || pager.hidden) return;
+    var dx = e.changedTouches[0].clientX - sx; sx = null;
+    if(Math.abs(dx) > 70){ if(dx < 0) next.click(); else prev.click(); }
+  }, {passive:true});
+
+  /* ---- Countdown ---- */
+  var elD = document.getElementById('cdD'), elH = document.getElementById('cdH'),
+      elM = document.getElementById('cdM'), elS = document.getElementById('cdS');
+  function pad(n){ return (n < 10 ? '0' : '') + n; }
+  function tick(){
+    var diff = TARGET - Date.now();
+    if(diff <= 0){
+      document.getElementById('cdTitle').textContent = 'Sportsfest is on';
+      document.getElementById('units').innerHTML = '<div class="live" style="grid-column:1/-1">Day 1 has started. See you at the court.</div>';
+      document.getElementById('cdNote').textContent = 'Open the next page for the schedule.';
+      clearInterval(timer);
+      return;
+    }
+    var s = Math.floor(diff/1000);
+    elD.textContent = pad(Math.floor(s/86400));
+    elH.textContent = pad(Math.floor(s%86400/3600));
+    elM.textContent = pad(Math.floor(s%3600/60));
+    elS.textContent = pad(s%60);
+  }
+  tick();
+  var timer = setInterval(tick, 1000);
+})();
+</script>
+</body>
+</html>
